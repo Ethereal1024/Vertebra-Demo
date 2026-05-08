@@ -2,10 +2,13 @@
 #define VTB_CAN_PORT
 
 #include <cstdint>
+#include <vector>
 
 #include "main.h"
 
 namespace CAN {
+
+using Handle = CAN_HandleTypeDef;
 
 enum class FilterMode : uint8_t {
   Mask = CAN_FILTERMODE_IDMASK,
@@ -32,6 +35,15 @@ struct Filter {
   uint32_t id_low = 0;
   uint32_t mask_high = 0;
   uint32_t mask_low = 0;
+};
+
+class Port {
+ public:
+  explicit Port(Handle& hcan, std::vector<Filter> filters,
+                uint8_t slave_start = 14);
+
+ private:
+  Handle& hcan_;
 };
 
 }  // namespace CAN
