@@ -1,0 +1,28 @@
+{
+  "configurations": [
+    {
+      "type": "cortex-debug",
+      "request": "launch",
+      "name": "OpenOCD Debug",
+      "servertype": "openocd",
+      "cwd": "${workspaceFolder}",
+      "executable": "${workspaceFolder}/build/Debug/Demo.elf",
+      "device": "STM32F407IGH6",
+      "configFiles": [
+        "${workspaceFolder}/.settings/openocd.cfg"
+      ],
+      "preLaunchTask": "Build Project",
+      "gdbTarget": "localhost:50000",
+      "showDevDebugOutput": "none",
+      "overrideLaunchCommands": [
+        "monitor reset halt",
+        "load",
+        "monitor reset halt"
+      ],
+      "overrideRestartCommands": [
+        "monitor reset halt",
+        "continue"
+      ]
+    }
+  ]
+}

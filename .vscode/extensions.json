@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "marus25.cortex-debug",
+    "misaka21.arm-livewatch",
+    "stmicroelectronics.stm32-vscode-extension"
+  ]
+}
