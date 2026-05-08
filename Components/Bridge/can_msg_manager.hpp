@@ -16,7 +16,7 @@ enum class CANRemoteType : uint32_t {
 class CANMsgManager {
  public:
   CANMsgManager() = delete;
-  CANMsgManager(CAN_HandleTypeDef* hcan);
+  CANMsgManager(CAN_HandleTypeDef& hcan);
 
   void send_data(const uint8_t* data);
   void send_data(const uint8_t* data, size_t data_len);
@@ -29,7 +29,7 @@ class CANMsgManager {
 
  private:
   CAN_TxHeaderTypeDef tx_header_;
-  CAN_HandleTypeDef* hcan_;
+  CAN_HandleTypeDef hcan_;
 };
 
 #endif

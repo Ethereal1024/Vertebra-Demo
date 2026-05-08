@@ -5,7 +5,15 @@
 
 #include "main.h"
 
-CANMsgManager::CANMsgManager(CAN_HandleTypeDef* hcan) : hcan_(hcan) {}
+CANMsgManager::CANMsgManager(CAN_HandleTypeDef& hcan) : hcan_(hcan) {
+  if (HAL_CAN_Start(&hcan) != HAL_OK) {
+    Error_Handler();
+  }
+  if (HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING) !=
+      HAL_OK) {
+    Error_Handler();
+  }
+}
 
 CANMsgManager& CANMsgManager::set_frame_id(uint32_t frame_id) {
   tx_header_.StdId = frame_id;
@@ -24,9 +32,6 @@ CANMsgManager& CANMsgManager::set_remote_type(CANRemoteType remote_type) {
 }
 
 CANMsgManager& CANMsgManager::set_data_len(size_t data_len) {
-  if (data_len > 8) {
-    throw std::out_of_range("CAN data length cannot greater than 8");
-  }
   tx_header_.DLC = static_cast<uint8_t>(data_len);
   return *this;
 }
@@ -38,8 +43,9 @@ CANMsgManager& CANMsgManager::set_time_req(bool required) {
 
 void CANMsgManager::send_data(const uint8_t* data) {
   uint32_t _;
-  while (HAL_CAN_GetTxMailboxesFreeLevel(hcan_) == 0);
-  HAL_StatusTypeDef status = HAL_CAN_AddTxMessage(hcan_, &tx_header_, data, &_);
+  while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan_) == 0);
+  HAL_StatusTypeDef status =
+      HAL_CAN_AddTxMessage(&hcan_, &tx_header_, data, &_);
   if (status != HAL_OK) {
     Error_Handler();
   }
