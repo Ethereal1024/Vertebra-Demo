@@ -19,13 +19,17 @@ class CANMsgManager {
   CANMsgManager(CAN_HandleTypeDef& hcan);
 
   void send_data(const uint8_t* data);
-  void send_data(const uint8_t* data, size_t data_len);
+
+  template <uint8_t DATA_LEN>
+  void send_data(const uint8_t* data);
 
   CANMsgManager& set_frame_id(uint32_t frame_id);
   CANMsgManager& set_frame_type(CANFrameType frame_type);
   CANMsgManager& set_remote_type(CANRemoteType remote_type);
-  CANMsgManager& set_data_len(size_t data_len);
   CANMsgManager& set_time_req(bool required);
+
+  template <uint8_t DATA_LEN>
+  CANMsgManager& set_data_len();
 
  private:
   CAN_TxHeaderTypeDef tx_header_;

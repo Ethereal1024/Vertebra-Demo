@@ -31,8 +31,12 @@ CANMsgManager& CANMsgManager::set_remote_type(CANRemoteType remote_type) {
   return *this;
 }
 
-CANMsgManager& CANMsgManager::set_data_len(size_t data_len) {
-  tx_header_.DLC = static_cast<uint8_t>(data_len);
+template <uint8_t DATA_LEN>
+CANMsgManager& CANMsgManager::set_data_len() {
+  static_assert(
+      DATA_LEN >= 0 && DATA_LEN <= 8,
+      "CAN data length must be the int greater than 0 and less than 8")
+      tx_header_.DLC = DATA_LEN;
   return *this;
 }
 
@@ -51,9 +55,10 @@ void CANMsgManager::send_data(const uint8_t* data) {
   }
 }
 
-void CANMsgManager::send_data(const uint8_t* data, size_t data_len) {
+template <uint8_t DATA_LEN>
+void CANMsgManager::send_data(const uint8_t* data) {
   uint8_t origin_DLC = tx_header_.DLC;
-  set_data_len(data_len);
+  set_data_len<DATA_LEN>();
   send_data(data);
   tx_header_.DLC = origin_DLC;
 }

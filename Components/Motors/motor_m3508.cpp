@@ -7,12 +7,12 @@ M3508Group::M3508Group(const CAN_HandleTypeDef& hcan)
   can_manager_->set_frame_id(0x200)
       .set_frame_type(CANFrameType::Standard)
       .set_remote_type(CANRemoteType::Data)
-      .set_data_len(8);
+      .set_data_len<8>();
 }
 
-void M3508Group::force(int id, float strength) {
-  if (id < 1 || id > 4) return;
-  motors_[id - 1] = strength;
+template <uint8_t ID>
+void M3508Group::force(float strength) {
+  motors_[ID - 1] = strength;
   send();
 }
 
@@ -26,7 +26,14 @@ void M3508Group::send() {
   can_manager_->send_data(data);
 }
 
-MotorM3508::MotorM3508(M3508Group& group, int motor_id)
-    : group_(group), motor_id_(motor_id) {}
+template <uint8_t ID>
+MotorM3508<ID>::MotorM3508(M3508Group& group) : group_(group) {
+  static_assert(
+      ID >= 1 && ID <= 4,
+      "M3508 Motor ID must be the int greater than 1 and less than 4");
+}
 
-void MotorM3508::force(float strength) { group_.force(motor_id_, strength); }
+template <uint8_t ID>
+void MotorM3508<ID>::force(float strength) {
+  group_.force(strength);
+}
