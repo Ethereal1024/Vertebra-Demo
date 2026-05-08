@@ -1,5 +1,5 @@
-#ifndef __MOTOR__
-#define __MOTOR__
+#ifndef VTB_MOTOR
+#define VTB_MOTOR
 
 class MotorBase {
  public:

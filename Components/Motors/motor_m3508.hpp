@@ -9,8 +9,7 @@
 
 class M3508Group {
  public:
-  M3508Group() = delete;
-  M3508Group(const CAN_HandleTypeDef& hcan);
+  explicit M3508Group(const CANHandle& hcan);
 
   template <uint8_t ID>
   void force(float strength);
@@ -24,8 +23,7 @@ class M3508Group {
 template <uint8_t ID>
 class MotorM3508 : public MotorBase {
  public:
-  MotorM3508() = delete;
-  MotorM3508(M3508Group& group);
+  explicit MotorM3508(M3508Group& group);
   void force(float strenghth) override;
 
  private:

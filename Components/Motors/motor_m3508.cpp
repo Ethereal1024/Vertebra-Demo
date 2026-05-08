@@ -2,7 +2,7 @@
 
 #include <sys/types.h>
 
-M3508Group::M3508Group(const CAN_HandleTypeDef& hcan)
+M3508Group::M3508Group(const CANHandle& hcan)
     : can_manager_(std::make_unique<CANMsgManager>(hcan)) {
   can_manager_->set_frame_id(0x200)
       .set_frame_type(CANFrameType::Standard)

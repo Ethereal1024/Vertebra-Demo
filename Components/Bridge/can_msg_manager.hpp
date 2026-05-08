@@ -1,7 +1,9 @@
-#ifndef __CAN_MSG_MANAGER__
-#define __CAN_MSG_MANAGER__
+#ifndef VTB_CAN_MSG_MANAGER
+#define VTB_CAN_MSG_MANAGER
 
 #include "main.h"
+
+using CANHandle = CAN_HandleTypeDef;
 
 enum class CANFrameType : uint32_t {
   Standard = CAN_ID_STD,
@@ -15,8 +17,9 @@ enum class CANRemoteType : uint32_t {
 
 class CANMsgManager {
  public:
-  CANMsgManager() = delete;
-  CANMsgManager(CAN_HandleTypeDef& hcan);
+  explicit CANMsgManager::CANMsgManager(CANHandle& hcan,
+                                        std::vector<CANFilter> filters,
+                                        uint8_t slave_start = 14);
 
   void send_data(const uint8_t* data);
 
@@ -33,7 +36,7 @@ class CANMsgManager {
 
  private:
   CAN_TxHeaderTypeDef tx_header_;
-  CAN_HandleTypeDef hcan_;
+  CANHandle& hcan_;
 };
 
 #endif

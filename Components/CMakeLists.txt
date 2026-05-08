@@ -4,6 +4,7 @@ add_library(vertebra OBJECT
   motor.cpp
   Motors/motor_m3508.cpp
   Bridge/can_msg_manager.cpp
+  bridge/can_port.cpp
 )
 
 target_include_directories(vertebra PUBLIC

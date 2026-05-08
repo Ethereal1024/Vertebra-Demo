@@ -2,10 +2,29 @@
 
 #include <cstdint>
 #include <stdexcept>
+#include <vector>
 
 #include "main.h"
 
-CANMsgManager::CANMsgManager(CAN_HandleTypeDef& hcan) : hcan_(hcan) {
+CANMsgManager::CANMsgManager(CANHandle& hcan, std::vector<CANFilter> filters,
+                             uint8_t slave_start = 14)
+    : hcan_(hcan) {
+  for (const auto& f : filters) {
+    CAN_FilterTypeDef sf = {};
+    sf.FilterActivation = f.activation ? ENABLE : DISABLE;
+    sf.FilterMode = f.mode;
+    sf.FilterScale = f.scale;
+    sf.FilterFIFOAssignment = f.fifo;
+    sf.FilterBank = f.bank;
+    sf.FilterIdHigh = f.id_high;
+    sf.FilterIdLow = f.id_low;
+    sf.FilterMaskIdHigh = f.mask_high;
+    sf.FilterMaskIdLow = f.mask_low;
+    sf.SlaveStartFilterBank = slave_start;
+    if (HAL_CAN_ConfigFilter(&hcan, &sf) != HAL_OK) {
+      Error_Handler();
+    }
+  }
   if (HAL_CAN_Start(&hcan) != HAL_OK) {
     Error_Handler();
   }
