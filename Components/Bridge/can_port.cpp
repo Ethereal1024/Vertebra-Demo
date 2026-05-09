@@ -1,9 +1,14 @@
 #include "can_port.hpp"
 
-#include "stm32f4xx_hal_def.h"
+#include <vector>
+
+#include "vertebra_dev.hpp"
 
 namespace CAN
 {
+
+static std::vector<const Port &> fifo0Ports;
+static std::vector<const Port &> fifo1Ports;
 
 CAN_FilterTypeDef Filter::to_hal_filter(uint8_t slave_start)
 {
@@ -94,14 +99,18 @@ Port::Port(Handle & hcan, std::vector<const Filter &> filters, uint8_t slave_sta
     if (HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
       Error_Handler();
     }
+    fifo0Ports.emplace_back(*this);
   }
 
   if (FIFO1_enable) {
     if (HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK) {
       Error_Handler();
     }
+    fifo1Ports.emplace_back(*this);
   }
 }
+
+const CAN_TypeDef * Port::get_instance() const { return hcan_.Instance; }
 
 bool Port::transmit(
   const CAN_TxHeaderTypeDef * header, const uint8_t * data, uint32_t * mail_box) const
@@ -117,4 +126,37 @@ bool Port::transmit(
   return status == HAL_OK;
 }
 
+void Port::add_std_callback(uint32_t frame_id, std::function<void(const uint8_t*)> callback) {
+  std_callbacks_[frame_id] = callback;
+}
+
+void Port::add_ext_callback(uint32_t frame_id, std::function<void(const uint8_t*)> callback) {
+  ext_callbacks_[frame_id] = callback;
+}
+
+void Port::exec_callback(uint32_t frame_id, const uint8_t* data, bool extended) const {
+  if (extended) ext_callbacks_.at(frame_id)(data);
+  else std_callbacks_.at(frame_id)(data);
+}
+
 }  // namespace CAN
+
+EXTERN_C_BEGIN
+
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef * hcan)
+{
+  CAN_RxHeaderTypeDef rxHeader;
+  uint8_t rxData[8];
+  if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rxHeader, rxData) == HAL_OK) {
+    for (const CAN::Port & port : CAN::fifo0Ports)
+      if (hcan->Instance == port.get_instance()) {
+        if (rxHeader.IDE == CAN_ID_STD) {
+          port.exec_callback(rxHeader.StdId, rxData);
+        } else if (rxHeader.IDE == CAN_ID_EXT) {
+          port.exec_callback(rxHeader.ExtId, rxData, true);
+        }
+      }
+  }
+}
+
+EXTERN_C_END

@@ -2,7 +2,9 @@
 #define VTB_CAN_PORT
 
 #include <cstdint>
+#include <functional>
 #include <vector>
+#include <unordered_map>
 
 #include "main.h"
 
@@ -69,11 +71,22 @@ class Port
 public:
   explicit Port(Handle & hcan, std::vector<const Filter &> filters, uint8_t slave_start = 14);
 
+  const CAN_TypeDef * get_instance() const;
+
   bool transmit(
     const CAN_TxHeaderTypeDef * header, const uint8_t * data, uint32_t * mail_box = nullptr) const;
 
+  void add_std_callback(uint32_t frame_id, std::function<void(const uint8_t*)> callback);
+
+  void add_ext_callback(uint32_t frame_id, std::function<void(const uint8_t*)> callback);
+
+  void exec_callback(uint32_t frame_id, const uint8_t* data, bool extended = false) const;
+
+
 private:
   Handle & hcan_;
+  std::unordered_map<uint32_t, std::function<void(const uint8_t*)>> std_callbacks_;
+  std::unordered_map<uint32_t, std::function<void(const uint8_t*)>> ext_callbacks_;
 };
 
 }  // namespace CAN
