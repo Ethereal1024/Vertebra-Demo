@@ -2,12 +2,12 @@
 
 #include <sys/types.h>
 
-M3508Group::M3508Group(const CANHandle& hcan)
-    : can_manager_(std::make_unique<CANMsgManager>(hcan)) {
+M3508Group::M3508Group(const CAN::Port& port)
+    : can_manager_(std::make_unique<CAN::MsgManager>(port)) {
   can_manager_->set_frame_id(0x200)
-      .set_frame_type(CANFrameType::Standard)
-      .set_remote_type(CANRemoteType::Data)
-      .set_data_len<8>();
+      .set_frame_type(CAN::FrameType::Standard)
+      .set_remote_type(CAN::RemoteType::Data)
+      .set_data_len(8);
 }
 
 template <uint8_t ID>

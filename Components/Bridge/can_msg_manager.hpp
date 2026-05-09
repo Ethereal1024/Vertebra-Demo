@@ -3,40 +3,43 @@
 
 #include "main.h"
 
-using CANHandle = CAN_HandleTypeDef;
+#include "can_port.hpp"
 
-enum class CANFrameType : uint32_t {
+namespace CAN
+{
+
+enum class FrameType : uint32_t
+{
   Standard = CAN_ID_STD,
   Extended = CAN_ID_EXT
 };
 
-enum class CANRemoteType : uint32_t {
+enum class RemoteType : uint32_t
+{
   Data = CAN_RTR_DATA,
   Remote = CAN_RTR_REMOTE
 };
 
-class CANMsgManager {
- public:
-  explicit CANMsgManager::CANMsgManager(CANHandle& hcan,
-                                        std::vector<CANFilter> filters,
-                                        uint8_t slave_start = 14);
+class MsgManager
+{
+public:
+  explicit MsgManager::MsgManager(const Port& port);
 
-  void send_data(const uint8_t* data);
+  void send_data(const uint8_t * data);
 
-  template <uint8_t DATA_LEN>
-  void send_data(const uint8_t* data);
+  void send_data(const uint8_t * data, uint8_t len);
 
-  CANMsgManager& set_frame_id(uint32_t frame_id);
-  CANMsgManager& set_frame_type(CANFrameType frame_type);
-  CANMsgManager& set_remote_type(CANRemoteType remote_type);
-  CANMsgManager& set_time_req(bool required);
+  MsgManager & set_frame_id(uint32_t frame_id);
+  MsgManager & set_frame_type(FrameType frame_type);
+  MsgManager & set_remote_type(RemoteType remote_type);
+  MsgManager & set_time_req(bool required);
+  MsgManager & set_data_len(uint8_t len);
 
-  template <uint8_t DATA_LEN>
-  CANMsgManager& set_data_len();
-
- private:
-  CAN_TxHeaderTypeDef tx_header_;
-  CANHandle& hcan_;
+private:
+  CAN_TxHeaderTypeDef header_;
+  const Port& port_;
 };
+
+}  // namespace CAN
 
 #endif

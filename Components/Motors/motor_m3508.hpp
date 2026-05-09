@@ -9,14 +9,14 @@
 
 class M3508Group {
  public:
-  explicit M3508Group(const CANHandle& hcan);
+  explicit M3508Group(const CAN::Port& port);
 
   template <uint8_t ID>
   void force(float strength);
 
  private:
   void send();
-  std::unique_ptr<CANMsgManager> can_manager_;
+  std::unique_ptr<CAN::MsgManager> can_manager_;
   int16_t motors_[4];
 };
 
