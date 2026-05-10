@@ -3,10 +3,11 @@
 
 #include <cstdint>
 #include <functional>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 #include "main.h"
+#include "stm32f4xx_hal_can.h"
 
 namespace CAN
 {
@@ -48,7 +49,7 @@ struct Filter
 
 struct RcvData
 {
-  const uint8_t* data;
+  const uint8_t * data;
   size_t size;
 };
 
@@ -75,21 +76,30 @@ private:
 class Port
 {
 public:
-  explicit Port(Handle & hcan, std::vector<const Filter &> filters, uint8_t slave_start = 14);
+  explicit Port(Handle & hcan, std::vector<const Filter &> filters = {}, uint8_t slave_start = 14);
 
   const CAN_TypeDef * get_instance() const;
 
   bool transmit(
     const CAN_TxHeaderTypeDef * header, const uint8_t * data, uint32_t * mail_box = nullptr) const;
 
-  void add_std_callback(uint32_t frame_id, std::function<void(const RcvData&)> callback);
-  void add_ext_callback(uint32_t frame_id, std::function<void(const RcvData&)> callback);
-  void exec_callback(const CAN_RxHeaderTypeDef& frame_header, const uint8_t* data) const;
+  void add_std_callback(uint32_t frame_id, std::function<void(const RcvData &)> callback);
+  void add_ext_callback(uint32_t frame_id, std::function<void(const RcvData &)> callback);
+
+  static void notify_fifo0(
+    CAN_HandleTypeDef * hcan, const CAN_RxHeaderTypeDef & header, const uint8_t * data);
+  static void notify_fifo1(
+    CAN_HandleTypeDef * hcan, const CAN_RxHeaderTypeDef & header, const uint8_t * data);
 
 private:
+  void exec_callback(const CAN_RxHeaderTypeDef & frame_header, const uint8_t * data) const;
+
   Handle & hcan_;
-  std::unordered_map<uint32_t, std::function<void(const RcvData&)>> std_callbacks_;
-  std::unordered_map<uint32_t, std::function<void(const RcvData&)>> ext_callbacks_;
+  std::unordered_map<uint32_t, std::function<void(const RcvData &)>> std_callbacks_;
+  std::unordered_map<uint32_t, std::function<void(const RcvData &)>> ext_callbacks_;
+
+  static std::vector<Port *> fifo0_ports_;
+  static std::vector<Port *> fifo1_ports_;
 };
 
 }  // namespace CAN
