@@ -3,7 +3,8 @@ cmake_minimum_required(VERSION 3.22)
 add_library(vertebra OBJECT
   motor.cpp
   Motors/motor_m3508.cpp
-  Bridge/can_msg_manager.cpp
+  bridge/can_sender.cpp
+  bridge/can_receiver.cpp
   bridge/can_port.cpp
 )
 

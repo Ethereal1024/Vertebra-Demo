@@ -1,5 +1,6 @@
 #include "can_port.hpp"
 
+#include <string.h>
 #include <vector>
 
 #include "vertebra_dev.hpp"
@@ -126,17 +127,26 @@ bool Port::transmit(
   return status == HAL_OK;
 }
 
-void Port::add_std_callback(uint32_t frame_id, std::function<void(const uint8_t*)> callback) {
+void Port::add_std_callback(uint32_t frame_id, std::function<void(const RcvData&)> callback)
+{
   std_callbacks_[frame_id] = callback;
 }
 
-void Port::add_ext_callback(uint32_t frame_id, std::function<void(const uint8_t*)> callback) {
+void Port::add_ext_callback(uint32_t frame_id, std::function<void(const RcvData&)> callback)
+{
   ext_callbacks_[frame_id] = callback;
 }
 
-void Port::exec_callback(uint32_t frame_id, const uint8_t* data, bool extended) const {
-  if (extended) ext_callbacks_.at(frame_id)(data);
-  else std_callbacks_.at(frame_id)(data);
+void Port::exec_callback(const CAN_RxHeaderTypeDef & frame_header, const uint8_t * data) const
+{
+  if (frame_header.RTR == CAN_RTR_REMOTE) return;
+  RcvData rcv;
+  rcv.size = static_cast<size_t>(frame_header.DLC);
+  rcv.data = data;
+  if (frame_header.IDE == CAN_ID_STD)
+    std_callbacks_.at(frame_header.StdId)(rcv);
+  else if (frame_header.IDE == CAN_ID_EXT)
+    ext_callbacks_.at(frame_header.ExtId)(rcv);
 }
 
 }  // namespace CAN
@@ -147,15 +157,23 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef * hcan)
 {
   CAN_RxHeaderTypeDef rxHeader;
   uint8_t rxData[8];
-  if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rxHeader, rxData) == HAL_OK) {
-    for (const CAN::Port & port : CAN::fifo0Ports)
-      if (hcan->Instance == port.get_instance()) {
-        if (rxHeader.IDE == CAN_ID_STD) {
-          port.exec_callback(rxHeader.StdId, rxData);
-        } else if (rxHeader.IDE == CAN_ID_EXT) {
-          port.exec_callback(rxHeader.ExtId, rxData, true);
-        }
-      }
+  if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rxHeader, rxData) != HAL_OK) return;
+  for (const CAN::Port & port : CAN::fifo0Ports) {
+    if (hcan->Instance == port.get_instance()) {
+      port.exec_callback(rxHeader, rxData);
+    }
+  }
+}
+
+void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef * hcan)
+{
+  CAN_RxHeaderTypeDef rxHeader;
+  uint8_t rxData[8];
+  if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &rxHeader, rxData) != HAL_OK) return;
+  for (const CAN::Port & port : CAN::fifo1Ports) {
+    if (hcan->Instance == port.get_instance()) {
+      port.exec_callback(rxHeader, rxData);
+    }
   }
 }
 

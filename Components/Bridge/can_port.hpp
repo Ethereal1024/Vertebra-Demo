@@ -46,6 +46,12 @@ struct Filter
   CAN_FilterTypeDef to_hal_filter(uint8_t slave_start = 14);
 };
 
+struct RcvData
+{
+  const uint8_t* data;
+  size_t size;
+};
+
 class FilterGen
 {
 public:
@@ -76,17 +82,14 @@ public:
   bool transmit(
     const CAN_TxHeaderTypeDef * header, const uint8_t * data, uint32_t * mail_box = nullptr) const;
 
-  void add_std_callback(uint32_t frame_id, std::function<void(const uint8_t*)> callback);
-
-  void add_ext_callback(uint32_t frame_id, std::function<void(const uint8_t*)> callback);
-
-  void exec_callback(uint32_t frame_id, const uint8_t* data, bool extended = false) const;
-
+  void add_std_callback(uint32_t frame_id, std::function<void(const RcvData&)> callback);
+  void add_ext_callback(uint32_t frame_id, std::function<void(const RcvData&)> callback);
+  void exec_callback(const CAN_RxHeaderTypeDef& frame_header, const uint8_t* data) const;
 
 private:
   Handle & hcan_;
-  std::unordered_map<uint32_t, std::function<void(const uint8_t*)>> std_callbacks_;
-  std::unordered_map<uint32_t, std::function<void(const uint8_t*)>> ext_callbacks_;
+  std::unordered_map<uint32_t, std::function<void(const RcvData&)>> std_callbacks_;
+  std::unordered_map<uint32_t, std::function<void(const RcvData&)>> ext_callbacks_;
 };
 
 }  // namespace CAN
