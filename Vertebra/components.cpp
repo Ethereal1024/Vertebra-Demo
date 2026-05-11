@@ -5,7 +5,6 @@
 
 namespace vtb
 {
-
 void delay(uint32_t millisec)
 {
   static_assert(INCLUDE_vTaskDelay, "FreeRTOS Delay not configured");
