@@ -1,11 +1,10 @@
 #ifndef VTB_CAN_MSG_MANAGER
 #define VTB_CAN_MSG_MANAGER
 
+#include "can_port.hpp"
 #include "main.h"
 
-#include "can_port.hpp"
-
-namespace CAN
+namespace vtb::can
 {
 
 enum class FrameType : uint32_t
@@ -23,7 +22,7 @@ enum class RemoteType : uint32_t
 class Sender
 {
 public:
-  explicit Sender(const Port& port);
+  explicit Sender(const Port & port);
 
   void send(const uint8_t * data);
 
@@ -37,9 +36,9 @@ public:
 
 private:
   CAN_TxHeaderTypeDef header_;
-  const Port& port_;
+  const Port & port_;
 };
 
-}  // namespace CAN
+}  // namespace vtb::can
 
 #endif

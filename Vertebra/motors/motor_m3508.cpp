@@ -3,32 +3,34 @@
 #include <math.h>
 #include <sys/types.h>
 
-#include <algorithm>
 #include <cmath>
 
-#include "bridge/can_port.hpp"
-#include "vertebra_dev.hpp"
+#include "connection/can_port.hpp"
+#include "defs.hpp"
 
 using std::placeholders::_1;
 
-M3508Group::M3508Group(CAN::Port & port) : port_(port), sender0_(port), sender1_(port)
+namespace vtb
+{
+
+M3508Group::M3508Group(can::Port & port) : port_(port), sender0_(port), sender1_(port)
 {
   sender0_.set_frame_id(0x200)
-    .set_frame_type(CAN::FrameType::Standard)
-    .set_remote_type(CAN::RemoteType::Data)
+    .set_frame_type(can::FrameType::Standard)
+    .set_remote_type(can::RemoteType::Data)
     .set_data_len(8);
   sender1_.set_frame_id(0x1FF)
-    .set_frame_type(CAN::FrameType::Standard)
-    .set_remote_type(CAN::RemoteType::Data)
+    .set_frame_type(can::FrameType::Standard)
+    .set_remote_type(can::RemoteType::Data)
     .set_data_len(8);
 }
 
 template <uint8_t ID>
-CAN::Receiver M3508Group::create_receiver(
-  const std::function<void(const CAN::RcvData &)> & callback)
+can::Receiver M3508Group::create_receiver(
+  const std::function<void(const can::RcvData &)> & callback)
 {
   uint32_t frame_id = 0x200 | ID;
-  return CAN::Receiver(port_, frame_id, callback);
+  return can::Receiver(port_, frame_id, callback);
 }
 
 template <uint8_t ID>
@@ -50,7 +52,7 @@ void M3508Group::send(bool greater)
 {
   uint8_t data[8];
   int offset = 0;
-  CAN::Sender * sender = &sender0_;
+  can::Sender * sender = &sender0_;
   if (greater) {
     offset = 4;
     sender = &sender1_;
@@ -106,10 +108,12 @@ float MotorM3508<ID>::get_temperature()
 }
 
 template <uint8_t ID>
-void MotorM3508<ID>::callback(const CAN::RcvData & rcv)
+void MotorM3508<ID>::callback(const can::RcvData & rcv)
 {
   angle_ = ((rcv.data[0] << 8) | rcv.data[1]);
   speed_ = ((rcv.data[2] << 8) | rcv.data[3]);
   current_ = ((rcv.data[4] << 8) | rcv.data[5]);
   temperature_ = rcv.data[6];
 }
+
+}  // namespace vtb

@@ -9,7 +9,10 @@
 #include "main.h"
 #include "stm32f4xx_hal_can.h"
 
-namespace CAN
+namespace vtb
+{
+
+namespace can
 {
 
 using Handle = CAN_HandleTypeDef;
@@ -95,6 +98,7 @@ private:
   void exec_callback(const CAN_RxHeaderTypeDef & frame_header, const uint8_t * data) const;
 
   Handle & hcan_;
+
   std::unordered_map<uint32_t, std::function<void(const RcvData &)>> std_callbacks_;
   std::unordered_map<uint32_t, std::function<void(const RcvData &)>> ext_callbacks_;
 
@@ -102,6 +106,8 @@ private:
   static std::vector<Port *> fifo1_ports_;
 };
 
-}  // namespace CAN
+}  // namespace can
+
+}  // namespace vtb
 
 #endif

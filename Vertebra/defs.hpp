@@ -1,5 +1,5 @@
-#ifndef VTB_DEV
-#define VTB_DEV
+#ifndef VTB_DEFS
+#define VTB_DEFS
 
 #include "main.h"
 

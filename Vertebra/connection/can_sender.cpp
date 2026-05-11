@@ -6,7 +6,7 @@
 
 #include "main.h"
 
-namespace CAN
+namespace vtb::can
 {
 
 Sender::Sender(const Port & port) : port_(port) {}
@@ -57,4 +57,4 @@ void Sender::send(const uint8_t * data, uint8_t len)
   header_.DLC = origin_DLC;
 }
 
-}  // namespace CAN
+}  // namespace vtb::can

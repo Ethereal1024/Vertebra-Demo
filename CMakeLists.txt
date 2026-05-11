@@ -33,12 +33,14 @@ enable_language(C ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME}
-    Components/bridge/can_receiver.cpp
+    Vertebra/task/cycle_task.hpp
+    Vertebra/task/event_task.hpp
+    Vertebra/task/once_task.hpp
 )
 
 # Add STM32CubeMX generated sources
 add_subdirectory(Mx/cmake/stm32cubemx)
-add_subdirectory(Components)
+add_subdirectory(Vertebra)
 
 add_custom_command(
     TARGET ${CMAKE_PROJECT_NAME} PRE_LINK

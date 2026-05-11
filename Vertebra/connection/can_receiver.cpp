@@ -1,6 +1,6 @@
 #include "can_receiver.hpp"
 
-namespace CAN
+namespace vtb::can
 {
 Receiver::Receiver(
   Port & port, uint8_t frame_id, std::function<void(const RcvData &)> callback, bool extended)
@@ -13,4 +13,4 @@ Receiver::Receiver(
 }
 
 uint8_t Receiver::get_frame_id() { return frame_id_; }
-}  // namespace CAN
+}  

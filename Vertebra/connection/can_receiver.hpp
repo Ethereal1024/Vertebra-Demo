@@ -6,7 +6,7 @@
 
 #include "can_port.hpp"
 
-namespace CAN
+namespace vtb::can
 {
 
 class Receiver
@@ -20,10 +20,10 @@ public:
 
 private:
   uint8_t frame_id_;
-  Port& port_;
+  Port & port_;
   const std::function<void(const RcvData &)> callback_;
 };
 
-}  // namespace CAN
+}  // namespace vtb::can
 
 #endif

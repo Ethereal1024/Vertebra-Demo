@@ -4,9 +4,12 @@
 
 #include <vector>
 
-#include "vertebra_dev.hpp"
+#include "defs.hpp"
 
-namespace CAN
+namespace vtb
+{
+
+namespace can
 {
 CAN_FilterTypeDef Filter::to_hal_filter(uint8_t slave_start)
 {
@@ -149,7 +152,7 @@ void Port::exec_callback(const CAN_RxHeaderTypeDef & frame_header, const uint8_t
 void Port::notify_fifo0(
   CAN_HandleTypeDef * hcan, const CAN_RxHeaderTypeDef & header, const uint8_t * data)
 {
-  for (const CAN::Port * port : fifo0_ports_) {
+  for (const can::Port * port : fifo0_ports_) {
     if (hcan->Instance == port->get_instance()) {
       port->exec_callback(header, data);
     }
@@ -159,14 +162,16 @@ void Port::notify_fifo0(
 void Port::notify_fifo1(
   CAN_HandleTypeDef * hcan, const CAN_RxHeaderTypeDef & header, const uint8_t * data)
 {
-  for (const CAN::Port * port : fifo1_ports_) {
+  for (const can::Port * port : fifo1_ports_) {
     if (hcan->Instance == port->get_instance()) {
       port->exec_callback(header, data);
     }
   }
 }
 
-}  // namespace CAN
+}  // namespace can
+
+}  // namespace vtb
 
 EXTERN_C_BEGIN
 
@@ -175,7 +180,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef * hcan)
   CAN_RxHeaderTypeDef rxHeader;
   uint8_t rxData[8];
   if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rxHeader, rxData) != HAL_OK) return;
-  CAN::Port::notify_fifo0(hcan, rxHeader, rxData);
+  vtb::can::Port::notify_fifo0(hcan, rxHeader, rxData);
 }
 
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef * hcan)
@@ -183,7 +188,7 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef * hcan)
   CAN_RxHeaderTypeDef rxHeader;
   uint8_t rxData[8];
   if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &rxHeader, rxData) != HAL_OK) return;
-  CAN::Port::notify_fifo1(hcan, rxHeader, rxData);
+  vtb::can::Port::notify_fifo1(hcan, rxHeader, rxData);
 }
 
 EXTERN_C_END
