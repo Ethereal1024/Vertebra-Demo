@@ -1,7 +1,6 @@
 #ifndef VTB_TASK
 #define VTB_TASK
 
-#include <cstdint>
 #include <vector>
 
 #include "FreeRTOS.h"
@@ -16,6 +15,7 @@ class TaskBase
 {
 public:
   virtual void start() = 0;
+  virtual ~TaskBase() = default;
 };
 
 class TaskLauncher : public Singleton<TaskLauncher>
@@ -42,6 +42,9 @@ public:
   virtual ~Task();
 
   void start() override;
+
+  const char* get_name();
+  Priority get_priority();
 
 protected:
   virtual void run() = 0;

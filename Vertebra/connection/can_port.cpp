@@ -1,10 +1,6 @@
 #include "can_port.hpp"
 
-#include <string.h>
-
 #include <vector>
-
-#include "defs.hpp"
 
 namespace vtb
 {
@@ -173,8 +169,7 @@ void Port::notify_fifo1(
 
 }  // namespace vtb
 
-EXTERN_C_BEGIN
-
+extern "C" {
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef * hcan)
 {
   CAN_RxHeaderTypeDef rxHeader;
@@ -190,5 +185,4 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef * hcan)
   if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO1, &rxHeader, rxData) != HAL_OK) return;
   vtb::can::Port::notify_fifo1(hcan, rxHeader, rxData);
 }
-
-EXTERN_C_END
+}

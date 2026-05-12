@@ -1,5 +1,7 @@
 #include "motor_m3508.hpp"
 
+#ifdef HAL_CAN_MODULE_ENABLED
+
 #include <math.h>
 #include <sys/types.h>
 
@@ -117,3 +119,5 @@ void MotorM3508<ID>::callback(const can::RcvData & rcv)
 }
 
 }  // namespace vtb
+
+#endif

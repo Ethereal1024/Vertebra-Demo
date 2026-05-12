@@ -46,6 +46,17 @@ void Task<SIZE>::start()
 }
 
 template <uint32_t SIZE>
+const char* Task<SIZE>::get_name() {
+  if (name_ == nullptr) return "";
+  return *name_;
+}
+
+template <uint32_t SIZE>
+Priority Task<SIZE>::get_priority() {
+  return priority_;
+}
+
+template <uint32_t SIZE>
 void Task<SIZE>::task_entry(void * argument)
 {
   auto * task = static_cast<Task<SIZE> *>(argument);

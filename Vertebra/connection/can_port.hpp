@@ -1,13 +1,13 @@
 #ifndef VTB_CAN_PORT
 #define VTB_CAN_PORT
 
-#include <cstdint>
+#include "main.h"
+
+#ifdef HAL_CAN_MODULE_ENABLED
+
 #include <functional>
 #include <unordered_map>
 #include <vector>
-
-#include "main.h"
-#include "stm32f4xx_hal_can.h"
 
 namespace vtb
 {
@@ -109,5 +109,7 @@ private:
 }  // namespace can
 
 }  // namespace vtb
+
+#endif
 
 #endif

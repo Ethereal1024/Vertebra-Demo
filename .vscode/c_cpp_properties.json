@@ -8,9 +8,7 @@
             "cppStandard": "c++17",
             "includePath": [
                 "${default}",
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/Mx/Core/Inc",
-                "${workspaceFolder}/Components/**"
+                "${workspaceFolder}/**"
             ]
         }
     ],

@@ -1,12 +1,15 @@
 #ifndef MOTOR_M3508
 #define MOTOR_M3508
 
+#include "main.h"
+
+#ifdef HAL_CAN_MODULE_ENABLED
+
 #include <memory>
 
 #include "connection/can_port.hpp"
 #include "connection/can_receiver.hpp"
 #include "connection/can_sender.hpp"
-#include "main.h"
 #include "motor.hpp"
 
 namespace vtb
@@ -59,5 +62,7 @@ private:
 };
 
 }  // namespace vtb
+
+#endif
 
 #endif

@@ -1,8 +1,12 @@
 #ifndef VTB_CAN_MSG_MANAGER
 #define VTB_CAN_MSG_MANAGER
 
-#include "can_port.hpp"
 #include "main.h"
+
+#ifdef HAL_CAN_MODULE_ENABLED
+
+#include "can_port.hpp"
+
 
 namespace vtb::can
 {
@@ -40,5 +44,7 @@ private:
 };
 
 }  // namespace vtb::can
+
+#endif
 
 #endif

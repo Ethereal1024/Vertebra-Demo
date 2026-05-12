@@ -33,9 +33,6 @@ enable_language(C ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME}
-    Vertebra/task/cycle_task.hpp
-    Vertebra/task/event_task.hpp
-    Vertebra/task/once_task.hpp
 )
 
 # Add STM32CubeMX generated sources

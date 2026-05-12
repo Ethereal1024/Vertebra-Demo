@@ -1,7 +1,10 @@
 #ifndef VTB_CAN_RECEIVER
 #define VTB_CAN_RECEIVER
 
-#include <cstdint>
+#include "main.h"
+
+#ifdef HAL_CAN_MODULE_ENABLED
+
 #include <functional>
 
 #include "can_port.hpp"
@@ -25,5 +28,7 @@ private:
 };
 
 }  // namespace vtb::can
+
+#endif
 
 #endif

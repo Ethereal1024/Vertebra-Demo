@@ -1,7 +1,6 @@
 #ifndef VTB_COMPONENTS
 #define VTB_COMPONENTS
 
-#include <cstdint>
 #include "FreeRTOS.h"
 
 namespace vtb

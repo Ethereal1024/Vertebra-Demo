@@ -1,0 +1,13 @@
+{
+  "Header define": {
+    "scope": "c, cpp",
+    "prefix": "head",
+    "body": [
+      "#ifndef ${1:HEADER_NAME}",
+      "#define ${1:HEADER_NAME}",
+      "",
+      "#endif"
+    ],
+    "description": "Create C/C++ header definition"
+  }
+}

@@ -1,10 +1,9 @@
 #include "can_sender.hpp"
 
-#include <cstdint>
+#ifdef HAL_CAN_MODULE_ENABLED
+
 #include <stdexcept>
 #include <vector>
-
-#include "main.h"
 
 namespace vtb::can
 {
@@ -58,3 +57,5 @@ void Sender::send(const uint8_t * data, uint8_t len)
 }
 
 }  // namespace vtb::can
+
+#endif
