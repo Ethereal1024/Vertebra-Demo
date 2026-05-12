@@ -9,6 +9,7 @@
 
 #include "connection/can_port.hpp"
 #include "defs.hpp"
+#include "components.hpp"
 
 using std::placeholders::_1;
 
@@ -42,8 +43,8 @@ void M3508Group::force(float strength)
   constexpr float amp = 20.0f;
   constexpr float scale = raw / amp;
 
-  float input = std::clamp(strength * scale, -raw, raw);
-  motors_[ID - 1] = static_cast<int16_t>(std::lround(input));
+  float input = clamp(strength * scale, -raw, raw);
+  strenghths_[ID - 1] = static_cast<int16_t>(std::lround(input));
   if (ID <= 4)
     send(false);
   else
@@ -62,8 +63,8 @@ void M3508Group::send(bool greater)
   for (size_t i = 0; i < 4; i++) {
     size_t j = i * 2;
     size_t k = i + offset;
-    data[j] = strenghths[k] >> 8;
-    data[j + 1] = strenghths[k];
+    data[j] = strenghths_[k] >> 8;
+    data[j + 1] = strenghths_[k];
   }
   sender->send(data);
 }

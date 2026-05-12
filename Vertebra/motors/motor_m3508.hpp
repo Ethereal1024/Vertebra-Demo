@@ -33,7 +33,7 @@ private:
   can::Sender sender0_;
   can::Sender sender1_;
 
-  int16_t strenghths[8];
+  int16_t strenghths_[8];
 };
 
 template <uint8_t ID>

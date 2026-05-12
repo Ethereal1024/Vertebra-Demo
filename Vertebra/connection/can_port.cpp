@@ -4,12 +4,13 @@
 
 #include <vector>
 
-namespace vtb
+namespace vtb::can
 {
 
-namespace can
-{
-CAN_FilterTypeDef Filter::to_hal_filter(uint8_t slave_start)
+std::vector<Port *> Port::fifo0_ports_;
+std::vector<Port *> Port::fifo1_ports_;
+
+CAN_FilterTypeDef Filter::to_hal_filter(uint8_t slave_start) const
 {
   CAN_FilterTypeDef sf = {};
   sf.FilterActivation = activation ? ENABLE : DISABLE;
@@ -81,7 +82,7 @@ FilterGen & FilterGen::set_mask_low(uint32_t mask_low)
   return *this;
 }
 
-Port::Port(Handle & hcan, std::vector<const Filter &> filters, uint8_t slave_start) : hcan_(hcan)
+Port::Port(Handle & hcan, std::vector<Filter> filters, uint8_t slave_start) : hcan_(hcan)
 {
   if (filters.empty()) filters.push_back(Filter());
   bool FIFO0_enable = false, FIFO1_enable = false;
@@ -167,9 +168,7 @@ void Port::notify_fifo1(
   }
 }
 
-}  // namespace can
-
-}  // namespace vtb
+}  // namespace vtb::can
 
 extern "C" {
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef * hcan)

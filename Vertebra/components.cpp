@@ -2,6 +2,7 @@
 
 #include "FreeRTOS.h"
 #include "task.h"
+#include <algorithm>
 
 namespace vtb
 {
@@ -10,6 +11,11 @@ void delay(uint32_t millisec)
   static_assert(INCLUDE_vTaskDelay, "FreeRTOS Delay not configured");
   TickType_t ticks = millisec / portTICK_PERIOD_MS;
   vTaskDelay(ticks ? ticks : 1);
+}
+
+template <class T>
+constexpr const T& clamp( const T& val, const T& lo, const T& hi ) {
+    return std::max( lo, std::min( val, hi ) );
 }
 
 }  // namespace vtb

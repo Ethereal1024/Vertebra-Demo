@@ -1,6 +1,8 @@
 #ifndef VTB_COMPONENTS
 #define VTB_COMPONENTS
 
+#include <algorithm>
+
 #include "FreeRTOS.h"
 
 namespace vtb
@@ -81,6 +83,9 @@ enum class Priority : uint32_t
 #endif
 
 void delay(uint32_t millisec);
-}
+
+template <class T>
+constexpr const T & clamp(const T & val, const T & lo, const T & hi);
+}  // namespace vtb
 
 #endif

@@ -47,7 +47,7 @@ struct Filter
   uint32_t mask_high = 0;
   uint32_t mask_low = 0;
 
-  CAN_FilterTypeDef to_hal_filter(uint8_t slave_start = 14);
+  CAN_FilterTypeDef to_hal_filter(uint8_t slave_start = 14) const;
 };
 
 struct RcvData
@@ -79,7 +79,7 @@ private:
 class Port
 {
 public:
-  explicit Port(Handle & hcan, std::vector<const Filter &> filters = {}, uint8_t slave_start = 14);
+  explicit Port(Handle & hcan, std::vector<Filter> filters = {}, uint8_t slave_start = 14);
 
   const CAN_TypeDef * get_instance() const;
 
