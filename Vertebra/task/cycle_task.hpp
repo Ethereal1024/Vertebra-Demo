@@ -13,7 +13,7 @@ public:
   explicit CycleTask(uint32_t delay, const char * name = nullptr, Priority priority = Priority::None);
   virtual ~CycleTask() = default;
 
-  virtual update() = 0;
+  virtual void update() = 0;
   
 private:
   void run() override;

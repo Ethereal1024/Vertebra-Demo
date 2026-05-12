@@ -1,5 +1,7 @@
 #include "can_port.hpp"
 
+#ifdef HAL_CAN_MODULE_ENABLED
+
 #include <vector>
 
 namespace vtb
@@ -186,3 +188,5 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef * hcan)
   vtb::can::Port::notify_fifo1(hcan, rxHeader, rxData);
 }
 }
+
+#endif

@@ -23,7 +23,7 @@ class TaskLauncher : public Singleton<TaskLauncher>
 public:
   friend class Singleton<TaskLauncher>;
 
-  void register_tasks(const TaskBase * task);
+  void register_tasks(TaskBase * task);
   void launch_tasks();
 
 private:

@@ -4,7 +4,7 @@
 namespace vtb
 {
 
-void TaskLauncher::register_tasks(const TaskBase * task) { tasks_.emplace_back(task); }
+void TaskLauncher::register_tasks(TaskBase * task) { tasks_.emplace_back(task); }
 
 void TaskLauncher::launch_tasks()
 {
