@@ -1,5 +1,5 @@
 #include "vtb_bridge.h"
-#include "task/vtb_task.hpp"
+#include "vertebra/task/vtb_task.hpp"
 
 extern "C" {
 void vtb_launch_tasks() {

@@ -7,9 +7,9 @@
 
 #include <cmath>
 
-#include "connection/can_port.hpp"
-#include "defs.hpp"
-#include "components.hpp"
+#include "vertebra/connection/can_port.hpp"
+#include "vertebra/defs.hpp"
+#include "vertebra/components.hpp"
 
 using std::placeholders::_1;
 

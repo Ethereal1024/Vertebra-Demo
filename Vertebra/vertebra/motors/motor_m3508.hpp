@@ -7,10 +7,10 @@
 
 #include <memory>
 
-#include "connection/can_port.hpp"
-#include "connection/can_receiver.hpp"
-#include "connection/can_sender.hpp"
-#include "motor.hpp"
+#include "vertebra/connection/can_port.hpp"
+#include "vertebra/connection/can_receiver.hpp"
+#include "vertebra/connection/can_sender.hpp"
+#include "vertebra/motor.hpp"
 
 namespace vtb
 {
