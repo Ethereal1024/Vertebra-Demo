@@ -85,7 +85,9 @@ enum class Priority : uint32_t
 void delay(uint32_t millisec);
 
 template <class T>
-constexpr const T & clamp(const T & val, const T & lo, const T & hi);
+constexpr const T& clamp( const T& val, const T& lo, const T& hi ) {
+    return std::max( lo, std::min( val, hi ) );
+}
 }  // namespace vtb
 
 #endif

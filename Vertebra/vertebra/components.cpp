@@ -13,9 +13,4 @@ void delay(uint32_t millisec)
   vTaskDelay(ticks ? ticks : 1);
 }
 
-template <class T>
-constexpr const T& clamp( const T& val, const T& lo, const T& hi ) {
-    return std::max( lo, std::min( val, hi ) );
-}
-
 }  // namespace vtb

@@ -9,6 +9,7 @@
 #include "task.h"
 #include "vertebra/components.hpp"
 #include "vertebra/design/singleton.hpp"
+#include "vertebra/design/loon.hpp"
 
 namespace vtb {
 class TaskBase {
@@ -21,13 +22,15 @@ class TaskLauncher : public Singleton<TaskLauncher> {
  public:
   friend class Singleton<TaskLauncher>;
 
-  void register_tasks(TaskBase* task);
+  void register_task(TaskBase* task);
+  void register_loon(Loon* loon);
   void launch_tasks();
 
  private:
   TaskLauncher() = default;
 
   std::vector<TaskBase*> tasks_;
+  std::vector<Loon*> loons_;
 };
 
 template <uint32_t SIZE>
@@ -39,7 +42,7 @@ class Task : public TaskBase {
   explicit Task(const char* name = nullptr, Priority priority = Priority::None)
       : name_(name), priority_(priority) {
     if (priority_ == Priority::None) priority_ = Priority::Normal;
-    TaskLauncher::instance().register_tasks(this);
+    TaskLauncher::instance().register_task(this);
   }
 
   virtual ~Task() {

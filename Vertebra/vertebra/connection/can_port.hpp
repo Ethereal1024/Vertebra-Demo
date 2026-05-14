@@ -9,6 +9,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "vertebra/design/loon.hpp"
+
 namespace vtb
 {
 
@@ -76,10 +78,12 @@ private:
   Filter filter_;
 };
 
-class Port
+class Port : public Loon
 {
 public:
   explicit Port(Handle & hcan, std::vector<Filter> filters = {}, uint8_t slave_start = 14);
+
+  void awake() override;
 
   const CAN_TypeDef * get_instance() const;
 
@@ -98,6 +102,8 @@ private:
   void exec_callback(const CAN_RxHeaderTypeDef & frame_header, const uint8_t * data) const;
 
   Handle & hcan_;
+  uint8_t slave_start_;
+  std::vector<Filter> * filters_;
 
   std::unordered_map<uint32_t, std::function<void(const RcvData &)>> std_callbacks_;
   std::unordered_map<uint32_t, std::function<void(const RcvData &)>> ext_callbacks_;

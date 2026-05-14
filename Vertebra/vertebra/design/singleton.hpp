@@ -23,5 +23,6 @@ protected:
   ~Singleton() = default;
 };
 
+}  // namespace vtb
+
 #endif
-}
