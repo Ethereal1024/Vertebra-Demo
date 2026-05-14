@@ -138,10 +138,13 @@ void Port::exec_callback(const CAN_RxHeaderTypeDef& frame_header,
   RcvData rcv;
   rcv.size = static_cast<size_t>(frame_header.DLC);
   rcv.data = data;
-  if (frame_header.IDE == CAN_ID_STD)
-    std_callbacks_.at(frame_header.StdId)(rcv);
-  else if (frame_header.IDE == CAN_ID_EXT)
-    ext_callbacks_.at(frame_header.ExtId)(rcv);
+  if (frame_header.IDE == CAN_ID_STD) {
+    auto it = std_callbacks_.find(frame_header.StdId);
+    if (it != std_callbacks_.end()) it->second(rcv);
+  } else if (frame_header.IDE == CAN_ID_EXT) {
+    auto it = ext_callbacks_.find(frame_header.ExtId);
+    if (it != ext_callbacks_.end()) it->second(rcv);
+  }
 }
 
 void Port::notify_fifo0(CAN_HandleTypeDef* hcan,
