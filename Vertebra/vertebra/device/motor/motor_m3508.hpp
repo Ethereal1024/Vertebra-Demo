@@ -33,14 +33,14 @@ class M3508Group {
         .set_data_len(8);
   }
 
-  template <uint8_t ID>
+  template <uint16_t ID>
   can::Receiver create_receiver(
       const std::function<void(const can::RcvData&)>& callback) {
     uint32_t frame_id = 0x200 | ID;
     return can::Receiver(port_, frame_id, callback);
   }
 
-  template <uint8_t ID>
+  template <uint16_t ID>
   void force(float strength) {
     constexpr float raw = 16384.0f;
     constexpr float amp = 20.0f;
@@ -80,7 +80,7 @@ class M3508Group {
   int16_t strenghths_[8];
 };
 
-template <uint8_t ID>
+template <uint16_t ID>
 class MotorM3508 : public Motor {
  public:
   explicit MotorM3508(M3508Group& group)

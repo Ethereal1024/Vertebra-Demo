@@ -16,13 +16,13 @@ class Receiver
 {
 public:
   explicit Receiver(
-    Port & port, uint8_t frame_id, std::function<void(const RcvData &)> callback,
+    Port & port, uint32_t frame_id, std::function<void(const RcvData &)> callback,
     bool extended = false);
 
-  uint8_t get_frame_id();
+  uint32_t get_frame_id();
 
 private:
-  uint8_t frame_id_;
+  uint32_t frame_id_;
   Port & port_;
   const std::function<void(const RcvData &)> callback_;
 };
