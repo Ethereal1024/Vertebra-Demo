@@ -85,7 +85,8 @@ class MotorM3508 : public Motor {
  public:
   explicit MotorM3508(M3508Group& group)
       : group_(group),
-        receiver_(group.create_receiver<ID>(std::bind(&MotorM3508::callback, this, std::placeholders::_1))) {
+        receiver_(group.create_receiver<ID>(
+            std::bind(&MotorM3508::callback, this, std::placeholders::_1))) {
     static_assert(ID >= 1 && ID <= 8,
                   "M3508 Motor ID must be the int between 1 and 8");
   }
@@ -96,17 +97,19 @@ class MotorM3508 : public Motor {
     constexpr float raw = 8191.0f;
     constexpr float scale = 2 * PI / raw;
     constexpr float offset = -PI;
-    return angle_ * scale + offset;
+    return (angle_ * scale + offset) * reduc_ratio_inv_;
   }
 
   float get_speed() override {
     constexpr float scale = 2 * PI / 60.0f;
-    return speed_ * scale;
+    return speed_ * scale * reduc_ratio_inv_;
   }
 
   float get_current() { return current_; }
 
   float get_temperature() { return temperature_; }
+
+  void set_reduc_ratio(float ratio) { reduc_ratio_inv_ = 1.0f / ratio; }
 
   void callback(const can::RcvData& rcv) {
     angle_ = ((rcv.data[0] << 8) | rcv.data[1]);
@@ -118,6 +121,8 @@ class MotorM3508 : public Motor {
  private:
   M3508Group& group_;
   can::Receiver receiver_;
+
+  float reduc_ratio_inv_ = 187 / 3591;
 
   int16_t angle_;
   int16_t speed_;
