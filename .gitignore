@@ -1,4 +1,5 @@
 build
 mx.scratch
 !.settings
-Mx
+Mx/**
+!Mx/*.ioc
