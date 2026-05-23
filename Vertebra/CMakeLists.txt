@@ -9,7 +9,8 @@ add_library(vertebra OBJECT
   vertebra/bridge/vtb_bridge.cpp
   vertebra/components.cpp
   vertebra/design/loon.cpp
-  vertebra/control/pid_controller.hpp
+  vertebra/control/pid_controller.cpp
+  vertebra/connection/uart_port.cpp
 )
 
 target_include_directories(vertebra

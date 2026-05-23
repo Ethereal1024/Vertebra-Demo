@@ -5,16 +5,13 @@
 
 #ifdef HAL_CAN_MODULE_ENABLED
 
-#include <functional>
 #include <unordered_map>
 #include <vector>
 
 #include "vertebra/design/loon.hpp"
+#include "callback.hpp"
 
-namespace vtb
-{
-
-namespace can
+namespace vtb::can
 {
 
 using Handle = CAN_HandleTypeDef;
@@ -52,12 +49,6 @@ struct Filter
   CAN_FilterTypeDef to_hal_filter(uint8_t slave_start = 14) const;
 };
 
-struct RcvData
-{
-  const uint8_t * data;
-  size_t size;
-};
-
 class FilterGen
 {
 public:
@@ -90,8 +81,8 @@ public:
   bool transmit(
     const CAN_TxHeaderTypeDef * header, const uint8_t * data, uint32_t * mail_box = nullptr) const;
 
-  void add_std_callback(uint32_t frame_id, std::function<void(const RcvData &)> callback);
-  void add_ext_callback(uint32_t frame_id, std::function<void(const RcvData &)> callback);
+  void add_std_callback(uint32_t frame_id, Callback callback);
+  void add_ext_callback(uint32_t frame_id, Callback callback);
 
   static void notify_fifo0(
     CAN_HandleTypeDef * hcan, const CAN_RxHeaderTypeDef & header, const uint8_t * data);
@@ -105,16 +96,14 @@ private:
   uint8_t slave_start_;
   std::vector<Filter> * filters_;
 
-  std::unordered_map<uint32_t, std::function<void(const RcvData &)>> std_callbacks_;
-  std::unordered_map<uint32_t, std::function<void(const RcvData &)>> ext_callbacks_;
+  std::unordered_map<uint32_t, Callback> std_callbacks_;
+  std::unordered_map<uint32_t, Callback> ext_callbacks_;
 
   static std::vector<Port *> fifo0_ports_;
   static std::vector<Port *> fifo1_ports_;
 };
 
-}  // namespace can
-
-}  // namespace vtb
+}  // namespace vtb::can
 
 #endif
 

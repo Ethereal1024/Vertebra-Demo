@@ -4,8 +4,7 @@
 
 namespace vtb::can
 {
-Receiver::Receiver(
-  Port & port, uint32_t frame_id, std::function<void(const RcvData &)> callback, bool extended)
+Receiver::Receiver(Port & port, uint32_t frame_id, Callback callback, bool extended)
 : frame_id_(frame_id), port_(port), callback_(callback)
 {
   if (extended)
@@ -15,6 +14,6 @@ Receiver::Receiver(
 }
 
 uint32_t Receiver::get_frame_id() { return frame_id_; }
-}
+}  // namespace vtb::can
 
 #endif

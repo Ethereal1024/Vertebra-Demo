@@ -35,7 +35,7 @@ class M3508Group {
 
   template <uint16_t ID>
   can::Receiver create_receiver(
-      const std::function<void(const can::RcvData&)>& callback) {
+      const Callback callback) {
     uint32_t frame_id = 0x200 | ID;
     return can::Receiver(port_, frame_id, callback);
   }
