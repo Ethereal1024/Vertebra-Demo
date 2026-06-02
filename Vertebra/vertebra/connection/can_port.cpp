@@ -152,17 +152,17 @@ void Port::exec_callback(const CAN_RxHeaderTypeDef & frame_header, const uint8_t
   rcv.data = data;
   if (frame_header.IDE == CAN_ID_STD) {
     auto it = std_callbacks_.find(frame_header.StdId);
-    if (it != std_callbacks_.end()) it->second(rcv);
+    if (it != std_callbacks_.end()) it->second.call(rcv);
   } else if (frame_header.IDE == CAN_ID_EXT) {
     auto it = ext_callbacks_.find(frame_header.ExtId);
-    if (it != ext_callbacks_.end()) it->second(rcv);
+    if (it != ext_callbacks_.end()) it->second.call(rcv);
   }
 }
 
 void Port::notify_fifo0(
   CAN_HandleTypeDef * hcan, const CAN_RxHeaderTypeDef & header, const uint8_t * data)
 {
-  for (const can::Port * port : fifo0_ports_) {
+  for (const Port * port : fifo0_ports_) {
     if (hcan->Instance == port->get_instance()) {
       port->exec_callback(header, data);
     }
@@ -172,7 +172,7 @@ void Port::notify_fifo0(
 void Port::notify_fifo1(
   CAN_HandleTypeDef * hcan, const CAN_RxHeaderTypeDef & header, const uint8_t * data)
 {
-  for (const can::Port * port : fifo1_ports_) {
+  for (const Port * port : fifo1_ports_) {
     if (hcan->Instance == port->get_instance()) {
       port->exec_callback(header, data);
     }

@@ -86,7 +86,7 @@ class MotorM3508 : public Motor {
   explicit MotorM3508(M3508Group& group)
       : group_(group),
         receiver_(group.create_receiver<ID>(
-            std::bind(&MotorM3508::callback, this, std::placeholders::_1))) {
+            Callback::bind<MotorM3508, &MotorM3508::callback>(this))) {
     static_assert(ID >= 1 && ID <= 8,
                   "M3508 Motor ID must be the int between 1 and 8");
   }
