@@ -32,14 +32,23 @@ public:
   void add_tx_callback(Callback callback);
   void add_rx_callback(Callback callback);
 
-  static void notify_tx(UART_HandleTypeDef *huart);
-  static void notify_rx(UART_HandleTypeDef *huart);
+  static void notify_tx(Handle *huart);
+  static void notify_rx(Handle *huart);
+  static void notify_rxh(Handle * huart);
+  static void notify_idle(Handle *huart, uint16_t size);
 
-  void exec_tx_callbacks() const;
-  void exec_rx_callbacks() const;
+  void exec_tx_callbacks();
+  void exec_rx_callbacks();
+  void exec_rxh_callbacks();
+  void exec_idle_callbacks(uint16_t size);
 
 private:
   void check_status();
+
+  void switch_buffer() const;
+
+  uint32_t get_dma_cr() const;
+  bool dma_is_circular(uint32_t cr) const;
 
   static bool bl_tx(Handle * handle, const uint8_t * data, size_t len);
   static bool it_tx(Handle * handle, const uint8_t * data, size_t len);
@@ -48,7 +57,9 @@ private:
   Handle & huart_;
   bool (*tx_)(Handle * handle, const uint8_t * data, size_t len);
   uint8_t * buffer_;
-  uint32_t size_;
+  uint32_t size_;  // expected to be the actual size of buffer
+  uint32_t half_;
+  bool it_buf_half_used_ = false;
 
   struct __status
   {
@@ -63,6 +74,7 @@ private:
     {
       bool tx = false;
       bool rx = false;
+      bool circular = false;
     } dma;
     bool idle = false;
   } status_;

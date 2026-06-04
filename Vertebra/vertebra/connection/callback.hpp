@@ -11,6 +11,7 @@ struct RcvData
 {
   const uint8_t * data = nullptr;
   size_t size = 0;
+  bool sticky = false;
 };
 
 class Callback
