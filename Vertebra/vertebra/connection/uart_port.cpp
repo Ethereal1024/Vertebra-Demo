@@ -33,12 +33,12 @@ void Port::awake()
   if (!status_.interrupt.rx) {
     Error::handle_error(ErrorType::INIT_FAILED);
   } else if (!status_.dma.rx) {
-    reset_rx_ = reset_rx_it;
+    launch_rx_ = HAL_UART_Receive_IT;
   } else if (!status_.dma.circular) {
-    reset_rx_ = reset_rx_dma;
+    launch_rx_ = HAL_UART_Receive_DMA;
   }
 
-  reset_rx_(this);
+  reset_rx();
 }
 
 const USART_TypeDef * Port::get_instance() const { return huart_.Instance; }
@@ -90,20 +90,15 @@ bool Port::dma_is_circular(uint32_t cr) const
 #endif
 }
 
-void Port::reset_rx_it(Port * port)
+void Port::reset_rx()
 {
-  if (port->buf_half_used_) {
-    HAL_UART_Receive_IT(&port->huart_, port->buffer_ + port->half_, port->half_);
-    port->buf_half_used_ = false;
+  if (buf_front_half_) {
+    launch_rx_(&huart_, buffer_ + half_, half_);
+    buf_front_half_ = false;
   } else {
-    HAL_UART_Receive_IT(&port->huart_, port->buffer_, port->half_);
-    port->buf_half_used_ = true;
+    launch_rx_(&huart_, buffer_, half_);
+    buf_front_half_ = true;
   }
-}
-
-void Port::reset_rx_dma(Port * port)
-{
-  HAL_UART_Receive_DMA(&port->huart_, port->buffer_, port->size_);
 }
 
 bool Port::bl_tx(Handle * handle, const uint8_t * data, size_t len)
@@ -169,8 +164,8 @@ void Port::exec_tx_callbacks()
 void Port::exec_rx_callbacks()
 {
   RcvData rcv = {buffer_ + half_, half_, status_.idle};
-  if (!status_.dma.rx && buf_half_used_) rcv.data = buffer_;
-  if (!status_.dma.circular) reset_rx_(this);
+  if (buf_front_half_) rcv.data = buffer_;
+  if (!status_.dma.circular) reset_rx();
   for (const auto & callback : rx_callbacks_) {
     callback.call(rcv);
   }
@@ -178,8 +173,8 @@ void Port::exec_rx_callbacks()
 
 void Port::exec_rxh_callbacks()
 {
-  if (!status_.dma.rx) return;
-  buf_half_used_ = true;
+  if (!status_.dma.circular) return;
+  buf_front_half_ = false;
   RcvData rcv = {buffer_, half_, status_.idle};
   for (const auto & callback : rx_callbacks_) {
     callback.call(rcv);
@@ -188,13 +183,16 @@ void Port::exec_rxh_callbacks()
 
 void Port::exec_idle_callbacks(uint16_t size)
 {
-  if (!status_.dma.rx) {
-    reset_rx_it(this);
-  } else {
+  RcvData rcv = {buffer_, size, false};
+  if (!buf_front_half_) rcv.data = buffer_ + half_;
+  if (size > half_) rcv.size = size - half_;
+  if (status_.dma.circular) {
     switch_buffer();
+  } else {
+    reset_rx();
   }
-  RcvData rcv = {
-    
+  for (const auto & callback : rx_callbacks_) {
+    callback.call(rcv);
   }
 }
 
@@ -221,11 +219,11 @@ void Port::switch_buffer()
   if (*mar < half_addr) {
     *mar = half_addr;
     *ndtr = half_;
-    buf_half_used_ = false;
+    buf_front_half_ = false;
   } else {
     *mar = (uint32_t)buffer_;
     *ndtr = size_;
-    buf_half_used_ = true;
+    buf_front_half_ = true;
   }
   __HAL_DMA_ENABLE(huart_.hdmarx);
 }
