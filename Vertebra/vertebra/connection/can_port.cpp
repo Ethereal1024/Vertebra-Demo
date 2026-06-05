@@ -3,6 +3,8 @@
 #ifdef HAL_CAN_MODULE_ENABLED
 
 #include <vector>
+#include "vertebra/error.hpp"
+#include "vertebra/components.hpp"
 
 namespace vtb::can
 {
@@ -97,20 +99,20 @@ void Port::awake()
     if (f.fifo == FilterFIFO::FIFO1 && !FIFO1_enable) FIFO1_enable = true;
 
     CAN_FilterTypeDef sf = f.to_hal_filter(slave_start_);
-    if (HAL_CAN_ConfigFilter(&hcan_, &sf) != HAL_OK) Error_Handler();
+    if (HAL_CAN_ConfigFilter(&hcan_, &sf) != HAL_OK) Error::handle_error(ErrorType::INIT_FAILED);
   }
-  if (HAL_CAN_Start(&hcan_) != HAL_OK) Error_Handler();
+  if (HAL_CAN_Start(&hcan_) != HAL_OK) Error::handle_error(ErrorType::INIT_FAILED);
 
   if (FIFO0_enable) {
     if (HAL_CAN_ActivateNotification(&hcan_, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) {
-      Error_Handler();
+      Error::handle_error(ErrorType::INIT_FAILED);
     }
     fifo0_ports_.emplace_back(this);
   }
 
   if (FIFO1_enable) {
     if (HAL_CAN_ActivateNotification(&hcan_, CAN_IT_RX_FIFO1_MSG_PENDING) != HAL_OK) {
-      Error_Handler();
+      Error::handle_error(ErrorType::INIT_FAILED);
     }
     fifo1_ports_.emplace_back(this);
   }

@@ -1,7 +1,9 @@
 #include "uart_port.hpp"
 
 #include "callback.hpp"
+#include "vertebra/components.hpp"
 #include "vertebra/defs.hpp"
+#include "vertebra/error.hpp"
 
 #ifdef HAL_UART_MODULE_ENABLED
 
@@ -28,11 +30,15 @@ void Port::awake()
     tx_ = &bl_tx;
   }
 
-  if (status_.dma.rx) {
-    HAL_UART_Receive_DMA(&huart_, buffer_, size_);
-  } else if (status_.interrupt.rx) {
-    HAL_UART_Receive_IT(&huart_, buffer_, half_);
+  if (!status_.interrupt.rx) {
+    Error::handle_error(ErrorType::INIT_FAILED);
+  } else if (!status_.dma.rx) {
+    reset_rx_ = reset_rx_it;
+  } else if (!status_.dma.circular) {
+    reset_rx_ = reset_rx_dma;
   }
+
+  reset_rx_(this);
 }
 
 const USART_TypeDef * Port::get_instance() const { return huart_.Instance; }
@@ -82,6 +88,22 @@ bool Port::dma_is_circular(uint32_t cr) const
 #elif defined(VTB_DMA_STREAM)
   return HAL_IS_BIT_SET(cr, DMA_SxCR_CIRC);
 #endif
+}
+
+void Port::reset_rx_it(Port * port)
+{
+  if (port->buf_half_used_) {
+    HAL_UART_Receive_IT(&port->huart_, port->buffer_ + port->half_, port->half_);
+    port->buf_half_used_ = false;
+  } else {
+    HAL_UART_Receive_IT(&port->huart_, port->buffer_, port->half_);
+    port->buf_half_used_ = true;
+  }
+}
+
+void Port::reset_rx_dma(Port * port)
+{
+  HAL_UART_Receive_DMA(&port->huart_, port->buffer_, port->size_);
 }
 
 bool Port::bl_tx(Handle * handle, const uint8_t * data, size_t len)
@@ -146,25 +168,9 @@ void Port::exec_tx_callbacks()
 
 void Port::exec_rx_callbacks()
 {
-  RcvData rcv = {buffer_, size_, status_.idle};
-  if (status_.dma.rx) {
-    rcv = {buffer_ + half_, half_, status_.idle};
-    if (!status_.dma.circular) {
-      HAL_UART_Receive_DMA(&huart_, buffer_, size_);
-    }
-  } else {
-    /* 
-      IT mode does not have half callback so we can only give up half of the buffer.
-      In that case, the rx_callback is expected to execute every time when mar reached the middle of the buffer,
-      then everything would be reset.
-    */
-    if (it_buf_half_used_) {
-      HAL_UART_Receive_IT(&huart_, buffer_, half_);
-    } else {
-      HAL_UART_Receive_IT(&huart_, buffer_ + half_, half_);
-      it_buf_half_used_ = false;
-    }
-  }
+  RcvData rcv = {buffer_ + half_, half_, status_.idle};
+  if (!status_.dma.rx && buf_half_used_) rcv.data = buffer_;
+  if (!status_.dma.circular) reset_rx_(this);
   for (const auto & callback : rx_callbacks_) {
     callback.call(rcv);
   }
@@ -173,6 +179,7 @@ void Port::exec_rx_callbacks()
 void Port::exec_rxh_callbacks()
 {
   if (!status_.dma.rx) return;
+  buf_half_used_ = true;
   RcvData rcv = {buffer_, half_, status_.idle};
   for (const auto & callback : rx_callbacks_) {
     callback.call(rcv);
@@ -181,7 +188,9 @@ void Port::exec_rxh_callbacks()
 
 void Port::exec_idle_callbacks(uint16_t size)
 {
-  if (status_.dma.circular) {
+  if (!status_.dma.rx) {
+    reset_rx_it(this);
+  } else {
     switch_buffer();
   }
 }

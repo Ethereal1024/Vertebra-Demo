@@ -50,16 +50,21 @@ private:
   uint32_t get_dma_cr() const;
   bool dma_is_circular(uint32_t cr) const;
 
+  static void reset_rx_it(Port* port);
+  static void reset_rx_dma(Port* port);
+
   static bool bl_tx(Handle * handle, const uint8_t * data, size_t len);
   static bool it_tx(Handle * handle, const uint8_t * data, size_t len);
   static bool dma_tx(Handle * handle, const uint8_t * data, size_t len);
 
   Handle & huart_;
-  bool (*tx_)(Handle * handle, const uint8_t * data, size_t len);
   uint8_t * buffer_;
   uint32_t size_;  // expected to be the actual size of buffer
   uint32_t half_;
-  bool it_buf_half_used_ = false;
+  bool buf_half_used_ = false;
+
+  bool (*tx_)(Handle * handle, const uint8_t * data, size_t len);
+  void (*reset_rx_)(Port* port) = nullptr;
 
   struct __status
   {

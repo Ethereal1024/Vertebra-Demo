@@ -82,6 +82,20 @@ enum class Priority : uint32_t
 #error Vertebra priority not supported.
 #endif
 
+enum class Status : uint8_t
+{
+  OK      = 0x00U,
+  ERROR   = 0x01U,
+  BUSY    = 0x02U,
+  TIMEOUT = 0x03U
+};
+
+enum ErrorType : uint8_t
+{
+  UNKNOWN     = 0x00U,
+  INIT_FAILED = 0x01U
+};
+
 void delay(uint32_t millisec);
 
 template <class T>
