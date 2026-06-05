@@ -45,7 +45,7 @@ public:
 private:
   void check_status();
 
-  void switch_buffer() const;
+  void switch_buffer();
 
   uint32_t get_dma_cr() const;
   bool dma_is_circular(uint32_t cr) const;

@@ -193,6 +193,9 @@ void Port::exec_idle_callbacks(uint16_t size)
   } else {
     switch_buffer();
   }
+  RcvData rcv = {
+    
+  }
 }
 
 /*
@@ -201,7 +204,7 @@ void Port::exec_idle_callbacks(uint16_t size)
   otherwise you might lose incoming data.
   However, the special case above can hardly happen in the normal situation.
 */
-void Port::switch_buffer() const
+void Port::switch_buffer()
 {
   volatile uint32_t * mar = nullptr;
   volatile uint32_t * ndtr = nullptr;
@@ -218,9 +221,11 @@ void Port::switch_buffer() const
   if (*mar < half_addr) {
     *mar = half_addr;
     *ndtr = half_;
+    buf_half_used_ = false;
   } else {
     *mar = (uint32_t)buffer_;
     *ndtr = size_;
+    buf_half_used_ = true;
   }
   __HAL_DMA_ENABLE(huart_.hdmarx);
 }
@@ -245,6 +250,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef * huart, uint16_t size)
     vtb::uart::Port::notify_rx(huart);
     return;
   }
+  vtb::uart::Port::notify_idle(huart, size);
 }
 }
 
