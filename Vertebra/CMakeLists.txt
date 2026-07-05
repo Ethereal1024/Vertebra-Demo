@@ -12,8 +12,10 @@ add_library(vertebra OBJECT
   vertebra/control/pid_controller.cpp
   vertebra/connection/uart_port.cpp
   vertebra/connection/callback.cpp
-  vertebra/error.hpp
   vertebra/error.cpp
+  vertebra/connection/uart_sender.cpp
+  vertebra/connection/uart_receiver.cpp
+  vertebra/connection/uart_receiver.hpp
 )
 
 target_include_directories(vertebra

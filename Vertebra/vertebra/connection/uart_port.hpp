@@ -6,18 +6,19 @@
 
 #ifdef HAL_UART_MODULE_ENABLED
 
-#include "vertebra/design/loon.hpp"
 #include <vector>
+
+#include "vertebra/design/loon.hpp"
 
 namespace vtb::uart
 {
 
 using Handle = UART_HandleTypeDef;
 
-class Port : public Loon
+class PortBase : public Loon
 {
 public:
-  explicit Port(Handle & huart, uint8_t * buffer, uint32_t size);
+  explicit PortBase(Handle & huart, uint8_t * buffer, uint32_t size);
 
   explicit operator bool() const;
 
@@ -25,22 +26,17 @@ public:
 
   const USART_TypeDef * get_instance() const;
 
-  bool transmit(const uint8_t * data, size_t len);
+  bool transmit(const uint8_t * data, size_t len) const;
 
-  bool transmit_blocking(const uint8_t * data, size_t len, uint32_t timeout = HAL_MAX_DELAY);
+  bool transmit_blocking(const uint8_t * data, size_t len, uint32_t timeout = HAL_MAX_DELAY) const;
 
   void add_tx_callback(Callback callback);
   void add_rx_callback(Callback callback);
 
-  static void notify_tx(Handle *huart);
-  static void notify_rx(Handle *huart);
+  static void notify_tx(Handle * huart);
+  static void notify_rx(Handle * huart);
   static void notify_rxh(Handle * huart);
-  static void notify_idle(Handle *huart, uint16_t size);
-
-  void exec_tx_callbacks();
-  void exec_rx_callbacks();
-  void exec_rxh_callbacks();
-  void exec_idle_callbacks(uint16_t size);
+  static void notify_idle(Handle * huart, uint16_t size);
 
 private:
   void check_status();
@@ -51,6 +47,11 @@ private:
   bool dma_is_circular(uint32_t cr) const;
 
   void reset_rx();
+
+  void exec_tx_callbacks();
+  void exec_rx_callbacks();
+  void exec_rxh_callbacks();
+  void exec_idle_callbacks(uint16_t size);
 
   static bool bl_tx(Handle * handle, const uint8_t * data, size_t len);
   static bool it_tx(Handle * handle, const uint8_t * data, size_t len);
@@ -63,7 +64,7 @@ private:
   bool buf_front_half_ = false;
 
   bool (*tx_)(Handle * handle, const uint8_t * data, size_t len);
-  HAL_StatusTypeDef (*launch_rx_)(Handle *huart, uint8_t *pData, uint16_t Size) = nullptr;
+  HAL_StatusTypeDef (*launch_rx_)(Handle * huart, uint8_t * pData, uint16_t Size) = nullptr;
 
   struct __status
   {
@@ -86,7 +87,17 @@ private:
   std::vector<Callback> tx_callbacks_;
   std::vector<Callback> rx_callbacks_;
 
-  static std::vector<Port *> ports_;
+  static std::vector<PortBase *> ports_;
+};
+
+template <uint32_t SIZE>
+class Port : public PortBase
+{
+public:
+  explicit Port(Handle & huart) : PortBase(huart, buffer_, SIZE * 2) {}
+
+private:
+  uint8_t buffer_[SIZE * 2];
 };
 
 }  // namespace vtb::uart

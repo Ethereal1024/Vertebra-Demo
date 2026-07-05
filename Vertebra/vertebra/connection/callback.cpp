@@ -3,30 +3,20 @@
 namespace vtb
 {
 
-Callback::Callback(void (*callback)(const RcvData &)) : ctx_(callback)
-{
-  cb_ = [](void * ctx, const RcvData & data) {
-    auto cb = static_cast<void (*)(const RcvData &)>(ctx);
-    cb(data);
-  };
-}
+Callback::Callback(void (*callback)(const RcvData &)) : cbarg_(callback) {}
 
-Callback::Callback(void * ctx, void (*callback)(void *, const RcvData &)) : ctx_(ctx), cb_(callback)
+Callback::Callback(void * ctx, void (*callback)(void *, const RcvData &))
+: ctx_(ctx), cbctx_(callback)
 {
 }
 
-Callback::Callback(void (*callback)()) : ctx_(callback)
-{
-  cb_ = [](void * ctx, const RcvData & data) {
-    auto cb = static_cast<void (*)()>(ctx);
-    cb();
-  };
-}
+Callback::Callback(void (*callback)()) : cbnarg_(callback) {}
 
 void Callback::call(const RcvData & data) const
 {
-  if (!cb_ || !ctx_) return;
-  cb_(ctx_, data);
+  if (ctx_ && cbctx_) cbctx_(ctx_, data);
+  else if (cbarg_) cbarg_(data);
+  else cbnarg_();
 }
 
 void Callback::call() const
@@ -35,6 +25,6 @@ void Callback::call() const
   call(empty);
 }
 
-Callback::operator bool() const { return ctx_ && cb_; }
+Callback::operator bool() const { return (ctx_ && cbctx_) || cbarg_ || cbnarg_; }
 
 }  // namespace vtb

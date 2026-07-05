@@ -17,4 +17,5 @@
   "files.autoSaveDelay": 0,
   "C_Cpp.clang_format_fallbackStyle": "Google",
   "editor.formatOnType": false,
+  "editor.tabSize": 2,
 }

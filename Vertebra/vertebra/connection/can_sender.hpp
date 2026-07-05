@@ -1,5 +1,5 @@
-#ifndef VTB_CAN_MSG_MANAGER
-#define VTB_CAN_MSG_MANAGER
+#ifndef VTB_CAN_SENDER
+#define VTB_CAN_SENDER
 
 #include "main.h"
 
@@ -29,7 +29,6 @@ public:
   explicit Sender(const Port & port);
 
   void send(const uint8_t * data);
-
   void send(const uint8_t * data, uint8_t len);
 
   Sender & set_frame_id(uint32_t frame_id);

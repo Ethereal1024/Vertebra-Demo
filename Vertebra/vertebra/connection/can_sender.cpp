@@ -1,4 +1,5 @@
 #include "can_sender.hpp"
+#include "vertebra/error.hpp"
 
 #ifdef HAL_CAN_MODULE_ENABLED
 
@@ -44,7 +45,7 @@ Sender & Sender::set_time_req(bool required)
 void Sender::send(const uint8_t * data)
 {
   if (!port_.transmit(&header_, data)) {
-    Error_Handler();
+    Error::handle_error();
   }
 }
 
