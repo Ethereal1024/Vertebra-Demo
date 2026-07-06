@@ -13,12 +13,15 @@ namespace vtb::uart
 class Sender
 {
 public:
-  explicit Sender(const PortBase & port);
+  explicit Sender(PortBase & port);
 
   void send(const uint8_t * data, size_t len);
+  void send_async(const uint8_t * data, size_t len);
+
+  void register_tx_callback(Callback callback);
 
 private:
-  const PortBase & port_;
+  PortBase & port_;
 };
 
 }  // namespace vtb::uart
