@@ -9,7 +9,7 @@ namespace vtb::uart
 Sender::Sender(const PortBase & port) : port_(port) {}
 
 void Sender::send(const uint8_t * data, size_t len) {
-  if (!port_.transmit(data, len)) {
+  if (!port_.transmit_blocking(data, len)) {
     Error::handle_error();
   }
 }

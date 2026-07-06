@@ -15,7 +15,6 @@ add_library(vertebra OBJECT
   vertebra/error.cpp
   vertebra/connection/uart_sender.cpp
   vertebra/connection/uart_receiver.cpp
-  vertebra/connection/uart_receiver.hpp
 )
 
 target_include_directories(vertebra

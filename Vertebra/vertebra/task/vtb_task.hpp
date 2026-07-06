@@ -56,15 +56,15 @@ class Task : public TaskBase {
     char empty = '\0';
     const char* name = name_ ? name_ : &empty;
     // clang-format off
-  handle_ = xTaskCreateStatic(
-    task_entry, 
-    name, 
-    STACK_DEPTH, 
-    this, 
-    static_cast<UBaseType_t>(priority_) - 1U, 
-    stack_, 
-    &tcb_
-  );
+    handle_ = xTaskCreateStatic(
+      task_entry, 
+      name, 
+      STACK_DEPTH, 
+      this, 
+      static_cast<UBaseType_t>(priority_) - 1U, 
+      stack_, 
+      &tcb_
+    );
     // clang-format on
   }
 
