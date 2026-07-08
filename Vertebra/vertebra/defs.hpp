@@ -16,4 +16,6 @@ constexpr float PI = 3.14159265358979323846f;
 #define VTB_DMA_STREAM
 #endif
 
+#define VTB_PACK struct  __attribute__((packed))
+
 #endif

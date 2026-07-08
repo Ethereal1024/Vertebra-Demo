@@ -122,7 +122,7 @@ class MotorM3508 : public Motor {
   M3508Group& group_;
   can::Receiver receiver_;
 
-  float reduc_ratio_inv_ = 187 / 3591;
+  float reduc_ratio_inv_ = 187.0f / 3591.0f;
 
   int16_t angle_;
   int16_t speed_;
