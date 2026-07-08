@@ -33,11 +33,12 @@ enable_language(C ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME}
+    App/motor_test.cpp
 )
 
 # Add STM32CubeMX generated sources
 add_subdirectory(Mx/cmake/stm32cubemx)
-# add_subdirectory(Vertebra)
+add_subdirectory(Vertebra)
 
 add_custom_command(
     TARGET ${CMAKE_PROJECT_NAME} PRE_LINK
@@ -71,6 +72,6 @@ list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
-    # vertebra
+    vertebra
     # Add user defined libraries
 )
