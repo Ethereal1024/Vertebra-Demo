@@ -9,7 +9,8 @@
             "includePath": [
                 "${default}",
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/Vertebra/**"
+                "${workspaceFolder}/Vertebra/**",
+                "${workspaceFolder}/Mx/**"
             ]
         }
     ],

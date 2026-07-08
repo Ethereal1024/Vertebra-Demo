@@ -105,13 +105,13 @@ class MotorM3508 : public Motor {
     return speed_ * scale * reduc_ratio_inv_;
   }
 
-  float get_current() { return current_; }
+  float get_current() { return (float)current_ / 1000.0f; }
 
   float get_temperature() { return temperature_; }
 
   void set_reduc_ratio(float ratio) { reduc_ratio_inv_ = 1.0f / ratio; }
 
-  void callback(const can::RcvData& rcv) {
+  void callback(const RcvData& rcv) {
     angle_ = ((rcv.data[0] << 8) | rcv.data[1]);
     speed_ = ((rcv.data[2] << 8) | rcv.data[3]);
     current_ = ((rcv.data[4] << 8) | rcv.data[5]);

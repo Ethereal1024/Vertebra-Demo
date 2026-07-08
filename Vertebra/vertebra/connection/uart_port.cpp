@@ -1,7 +1,6 @@
 #include "uart_port.hpp"
 
 #include "callback.hpp"
-#include "stm32f1xx_hal_uart.h"
 #include "vertebra/components.hpp"
 #include "vertebra/defs.hpp"
 #include "vertebra/error.hpp"
@@ -87,11 +86,20 @@ IRQn_Type PortBase::get_uart_irqn(const Handle& huart) const {
 #ifdef USART3
   if (huart.Instance == USART3) return USART3_IRQn;
 #endif
-#ifdef USART4
-  if (huart.Instance == USART4) return USART4_IRQn;
+#ifdef UART4
+  if (huart.Instance == UART4) return UART4_IRQn;
 #endif
-#ifdef USART5
-  if (huart.Instance == USART5) return USART5_IRQn;
+#ifdef UART5
+  if (huart.Instance == UART5) return UART5_IRQn;
+#endif
+#ifdef USART6
+  if (huart.Instance == USART6) return USART6_IRQn;
+#endif
+#ifdef UART7
+  if (huart.Instance == UART7) return UART7_IRQn;
+#endif
+#ifdef UART8
+  if (huart.Instance == UART8) return UART8_IRQn;
 #endif
 #ifdef LPUART1
   if (huart.Instance == LPUART1) return LPUART1;

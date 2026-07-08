@@ -14,7 +14,7 @@
 namespace vtb {
 class TaskBase {
  public:
-  virtual void start() = 0;
+  virtual void setup() = 0;
   virtual ~TaskBase() = default;
 };
 
@@ -52,7 +52,7 @@ class Task : public TaskBase {
     }
   }
 
-  void start() override {
+  void setup() override {
     char empty = '\0';
     const char* name = name_ ? name_ : &empty;
     // clang-format off

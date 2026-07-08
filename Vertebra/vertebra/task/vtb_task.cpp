@@ -10,7 +10,7 @@ void TaskLauncher::register_loon(Loon* loon) { loons_.emplace_back(loon); }
 
 void TaskLauncher::launch_tasks() {
   for (auto loon : loons_) loon->awake();
-  for (auto task : tasks_) task->start();
+  for (auto task : tasks_) task->setup();
 }
 
 }  // namespace vtb

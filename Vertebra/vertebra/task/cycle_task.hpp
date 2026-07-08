@@ -17,9 +17,10 @@ class CycleTask : public Task<SIZE> {
 
  protected:
   virtual void update() = 0;
-
+  virtual void start() {}
  private:
-  void run() override {
+   void run() override {
+    start();
     for (;;) {
       update();
       delay(delay_);

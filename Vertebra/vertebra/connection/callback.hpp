@@ -1,8 +1,6 @@
 #ifndef VTB_CALLBACK
 #define VTB_CALLBACK
 
-#include <cstdint>
-
 #include "main.h"
 
 namespace vtb
