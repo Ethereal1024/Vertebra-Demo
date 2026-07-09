@@ -4,22 +4,29 @@
 #include "main.h"
 #include "vtb_task.hpp"
 
-namespace vtb {
+namespace vtb
+{
 
 template <uint32_t SIZE>
-class CycleTask : public Task<SIZE> {
- public:
-  explicit CycleTask(uint32_t delay, const char* name = nullptr,
-                     Priority priority = Priority::None)
-      : Task<SIZE>(name, priority), delay_(delay) {}
+class CycleTask : public Task<SIZE>
+{
+public:
+  explicit CycleTask(
+    uint32_t delay, const char * name = nullptr, Priority priority = Priority::None)
+  : Task<SIZE>(name, priority), delay_(delay)
+  {
+  }
 
   virtual ~CycleTask() = default;
 
- protected:
+protected:
   virtual void update() = 0;
   virtual void start() {}
- private:
-   void run() override {
+  uint32_t get_delay() { return delay_; }
+
+private:
+  void run() override
+  {
     start();
     for (;;) {
       update();

@@ -32,6 +32,12 @@ PidCtrl & PidCtrl::set_post(float (*post)(float))
   return *this;
 }
 
+PidCtrl & PidCtrl::set_integral(float (*integral)(const State & state))
+{
+  integral_ = integral;
+  return *this;
+}
+
 PidCtrl & PidCtrl::set_term_p(float (*term_p)(const State &))
 {
   term_p_ = term_p;
@@ -52,6 +58,10 @@ PidCtrl & PidCtrl::add_term(float k, float (*term)(const State &))
 {
   attach_.push_back(std::pair<float, float (*)(const State &)>(k, term));
   return *this;
+}
+
+void PidCtrl::reset() {
+  state_ = State();
 }
 
 float PidCtrl::instruct(float real, float target, float dt)

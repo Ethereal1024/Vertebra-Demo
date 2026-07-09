@@ -31,6 +31,7 @@ public:
   PidCtrl & set_kd(float kd);
 
   PidCtrl & set_pre(void (*pre)(State &));
+  PidCtrl & set_integral(float (*integral)(const State & state));
   PidCtrl & set_post(float (*post)(float));
 
   PidCtrl & set_term_p(float (*term_p)(const State &));
@@ -38,6 +39,8 @@ public:
   PidCtrl & set_term_d(float (*term_d)(const State &));
 
   PidCtrl & add_term(float k, float (*term)(const State &));
+
+  void reset();
 
   float instruct(float real, float target, float dt);
 

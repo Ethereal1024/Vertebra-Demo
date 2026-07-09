@@ -18,6 +18,7 @@ add_library(vertebra OBJECT
   vertebra/math/function.cpp
   vertebra/algorithm/pid.cpp
   vertebra/__no_intell_error.cpp
+  vertebra/math/vec2.hpp
 )
 
 target_include_directories(vertebra

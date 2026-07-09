@@ -81,6 +81,8 @@ class M3508Group {
   int16_t strenghths_[8];
 };
 
+std::vector<int> vec({1, 2, 4});
+
 template <uint16_t ID>
 class MotorM3508 : public Motor {
  public:
