@@ -5,7 +5,6 @@
 #include <utility>
 #include <vector>
 
-#include "vertebra/algorithm/pid.hpp"
 #include "vertebra/math/function.hpp"
 
 namespace vtb
@@ -26,6 +25,19 @@ public:
   };
 
   explicit PidCtrl(float kp, float ki, float kd);
+
+  PidCtrl & set_kp(float kp);
+  PidCtrl & set_ki(float ki);
+  PidCtrl & set_kd(float kd);
+
+  PidCtrl & set_pre(void (*pre)(State &));
+  PidCtrl & set_post(void (*post)(State &));
+
+  PidCtrl & set_term_p(float (*term_p)(const State &));
+  PidCtrl & set_term_i(float (*term_i)(const State &));
+  PidCtrl & set_term_d(float (*term_d)(const State &));
+
+  PidCtrl & add_term(float k, float (*term)(const State &));
 
   float instruct(float real, float target, float dt);
 
@@ -58,8 +70,6 @@ private:
   State state_;
 };
 }  // namespace vtb
-
-auto func = [](vtb::PidCtrl::State & s) -> void { vtb::PidCtrl::_integral_trapezoid(s); };
 
 #define VTB_PID_PRE_DEADZONE_DETACH(deadzone) \
   [](vtb::PidCtrl::State & s) -> void { vtb::PidCtrl::_deadzone_detach(s, (deadzone)); }
