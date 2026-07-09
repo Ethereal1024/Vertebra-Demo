@@ -5,6 +5,55 @@ namespace vtb
 
 PidCtrl::PidCtrl(float kp, float ki, float kd) : kp_(kp), ki_(ki), kd_(kd) {}
 
+PidCtrl & PidCtrl::set_kp(float kp)
+{
+  kp_ = kp;
+  return *this;
+}
+PidCtrl & PidCtrl::set_ki(float ki)
+{
+  ki_ = ki;
+  return *this;
+}
+PidCtrl & PidCtrl::set_kd(float kd)
+{
+  kp_ = kd;
+  return *this;
+}
+
+PidCtrl & PidCtrl::set_pre(void (*pre)(State &))
+{
+  pre_ = pre;
+  return *this;
+}
+PidCtrl & PidCtrl::set_post(float (*post)(float))
+{
+  post_ = post;
+  return *this;
+}
+
+PidCtrl & PidCtrl::set_term_p(float (*term_p)(const State &))
+{
+  term_p_ = term_p;
+  return *this;
+}
+PidCtrl & PidCtrl::set_term_i(float (*term_i)(const State &))
+{
+  term_p_ = term_i;
+  return *this;
+}
+PidCtrl & PidCtrl::set_term_d(float (*term_d)(const State &))
+{
+  term_p_ = term_d;
+  return *this;
+}
+
+PidCtrl & PidCtrl::add_term(float k, float (*term)(const State &))
+{
+  attach_.push_back(std::pair<float, float (*)(const State &)>(k, term));
+  return *this;
+}
+
 float PidCtrl::instruct(float real, float target, float dt)
 {
   update_state(real, target, dt);
@@ -89,7 +138,5 @@ void PidCtrl::update_state(float real, float target, float dt)
   state_.itg_err += state_.itg_delta;
   state_.itg_delta = integral_(state_);
 }
-
-
 
 }  // namespace vtb
