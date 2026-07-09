@@ -2,7 +2,8 @@
   "livewatch.openocdPort": 50001,
   "cmake.cmakePath": "cube-cmake",
   "cmake.configureArgs": [
-    "-DCMAKE_COMMAND=cube-cmake"
+    "-DCMAKE_COMMAND=cube-cmake",
+    // "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
   ],
   "cmake.preferredGenerators": [
     "Ninja"

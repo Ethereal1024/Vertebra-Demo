@@ -11,7 +11,7 @@
 #include <cmath>
 #include <memory>
 
-#include "vertebra/components.hpp"
+#include "vertebra/math/function.hpp"
 #include "vertebra/connection/can_port.hpp"
 #include "vertebra/connection/can_receiver.hpp"
 #include "vertebra/connection/can_sender.hpp"

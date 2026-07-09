@@ -12,6 +12,7 @@ template <typename T>
 class SwitchBuffer
 {
 public:
+  SwitchBuffer() = default;
   static constexpr size_t size = sizeof(T);
   T & interface() { return buffer_.interface; }
   uint8_t* data() { return &buffer_.data[0]; }

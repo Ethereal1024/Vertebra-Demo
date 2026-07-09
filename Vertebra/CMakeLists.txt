@@ -15,11 +15,9 @@ add_library(vertebra OBJECT
   vertebra/error.cpp
   vertebra/connection/uart_sender.cpp
   vertebra/connection/uart_receiver.cpp
-  vertebra/connection/can.hpp
-  vertebra/connection/uart.hpp
-  vertebra/tool/serial_plot.hpp
-  vertebra/tool/variant_buffer.hpp
-  vertebra/tool/switch_buffer.hpp
+  vertebra/math/function.cpp
+  vertebra/algorithm/pid.cpp
+  vertebra/__no_intell_error.cpp
 )
 
 target_include_directories(vertebra

@@ -7,6 +7,10 @@
 
 namespace vtb
 {
+
+constexpr float PI = 3.14159265358979323846f;
+constexpr float EPSILON = 1e-9f;
+
 #if (configMAX_PRIORITIES >= 56)
 enum class Priority : uint32_t
 {
@@ -84,24 +88,20 @@ enum class Priority : uint32_t
 
 enum class Status : uint8_t
 {
-  OK      = 0x00U,
-  ERROR   = 0x01U,
-  BUSY    = 0x02U,
+  OK = 0x00U,
+  ERROR = 0x01U,
+  BUSY = 0x02U,
   TIMEOUT = 0x03U
 };
 
 enum ErrorType : uint8_t
 {
-  UNKNOWN     = 0x00U,
+  UNKNOWN = 0x00U,
   INIT_FAILED = 0x01U
 };
 
 void delay(uint32_t millisec);
 
-template <class T>
-constexpr const T& clamp( const T& val, const T& lo, const T& hi ) {
-    return std::max( lo, std::min( val, hi ) );
-}
 }  // namespace vtb
 
 #endif

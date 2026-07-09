@@ -6,7 +6,9 @@
 #ifdef PI
 #undef PI
 #endif
-constexpr float PI = 3.14159265358979323846f;
+#ifdef EPSILON
+#undef EPSILON
+#endif
 
 #if defined(STM32F0) || defined(STM32F1) || defined(STM32F3) || defined(STM32G0) || \
   defined(STM32G4) || defined(STM32L0) || defined(STM32L1)
