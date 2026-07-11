@@ -44,6 +44,8 @@ public:
 
   float instruct(float real, float target, float dt);
 
+  static float linear_diff(float target, float real);
+
   static float integral_rect(const State & state);
 
   static float _integral_detach(const State & state, float threshold);
@@ -58,12 +60,14 @@ public:
 
   static void _deadzone_detach(State & state, float deadzone);
   static void _integral_limit(State & state, float limit);
+  static void _angular_fix(State & state);
 
 private:
   void update_state(float real, float target, float dt);
 
   float kp_, ki_, kd_;
   void (*pre_)(State &) = nullptr;
+  float (*error_fn_)(float target, float real) = linear_diff;
   float (*integral_)(const State &) = integral_rect;
   float (*term_p_)(const State &) = term_p_plain;
   float (*term_i_)(const State &) = term_i_plain;

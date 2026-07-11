@@ -1,5 +1,7 @@
 #include "pid.hpp"
 
+#include "vertebra/components.hpp"
+
 namespace vtb
 {
 
@@ -60,9 +62,7 @@ PidCtrl & PidCtrl::add_term(float k, float (*term)(const State &))
   return *this;
 }
 
-void PidCtrl::reset() {
-  state_ = State();
-}
+void PidCtrl::reset() { state_ = State(); }
 
 float PidCtrl::instruct(float real, float target, float dt)
 {
@@ -112,6 +112,11 @@ void PidCtrl::_integral_limit(State & state, float limit)
 {
   state.itg_delta =
     vtb::clamp(state.itg_err + state.itg_delta, -std::abs(limit), std::abs(limit)) - state.itg_err;
+}
+
+void PidCtrl::_angular_fix(State & state)
+{
+  if (state.target - state.real > vtb::PI) state.target -= 2 * vtb::PI;
 }
 
 float PidCtrl::_integral_detach(const State & state, float threshold)
